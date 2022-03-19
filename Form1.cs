@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Globalization;
 namespace 生成圆圈图片的例子
 {
     public partial class Form1 : Form
@@ -21,9 +21,25 @@ namespace 生成圆圈图片的例子
 			this.StartPosition = FormStartPosition.CenterScreen;
 
 		}
-
-        private void Button1_Click(object sender, EventArgs e)
+		public string ConvertCC(DateTime str)//转换公历和农历
         {
+			ChineseLunisolarCalendar cncld = new ChineseLunisolarCalendar();
+			DateTime dt = new DateTime(str.Year, str.Month, str.Day);
+			int year = cncld.GetYear(dt);
+			// 是否有闰月,返回正整数（2020年闰4月，返回值为5）
+			int flag = cncld.GetLeapMonth(year);
+			int month = flag > 0 ? cncld.GetMonth(dt) - 1 : cncld.GetMonth(dt);
+			int day = cncld.GetDayOfMonth(dt);
+			string nonstr= "农历：" + year + "年" + month + "月" + day + "日";
+			return nonstr;
+		}
+        private void Button1_Click(object sender, EventArgs e)
+		{
+			
+			//DateTime dtnl = dateTimePicker1.ToDateTime(year, month, day, 0, 0, 0, 0);
+			//dtnl = flag > 0 ? dtnl.AddMonths(1) : dtnl;
+		label5.Text= ConvertCC(dateTimePicker1.Value);
+		label6.Text = ConvertCC(dateTimePicker2.Value);
 			wuyunliuqi w = new wuyunliuqi();
 			//---------------------出生命图
 			string g =  w.getGanzhi(dateTimePicker1.Value);		
@@ -33,6 +49,7 @@ namespace 生成圆圈图片的例子
 			string cz = w.getCurrentZhuqi(dateTimePicker1.Value);
 			string ck = w.getCurrentKeqi(dateTimePicker1.Value);
 			richTextBox1.Text = "天干：" + g + "\r\n" + "司天：" + s + "\r\n" + "客气：" + ck + "\r\n" + "主运：" + wx + "\r\n" + "主气：" + cz + "\r\n" + "在泉：" + z;
+			richTextBox3.Text = "" + yangboNum(g) + "\r\n" + "" + yangboNum(s) + "\r\n" + yangboNum(ck) + "\r\n"  + yangboNum(wx) + "\r\n"  + yangboNum(cz) + "\r\n"  + yangboNum(z);
 			//---------------------病图
 			string g1 = w.getGanzhi(dateTimePicker2.Value);
 			string wx1 = w.getWuxing(dateTimePicker2.Value);
@@ -41,7 +58,7 @@ namespace 生成圆圈图片的例子
 			string cz1 =  w.getCurrentZhuqi(dateTimePicker2.Value);
 			string ck1 =  w.getCurrentKeqi(dateTimePicker2.Value);
 			richTextBox2.Text = "天干：" + g1 + "\r\n" + "司天：" + s1 + "\r\n" + "客气：" + ck1 + "\r\n" + "主运：" + wx1 + "\r\n" + "主气：" + cz1 + "\r\n" + "在泉：" + z1;
-
+			richTextBox4.Text = "" + yangboNum(g1) + "\r\n" + "" + yangboNum(s1) + "\r\n" + yangboNum(ck1) + "\r\n" + yangboNum(wx1) + "\r\n" + yangboNum(cz1) + "\r\n" + yangboNum(z1);
 			List<string> mtlist = new List<string>();
 			//mtlist.Add(g);
 			mtlist.Add(wx);
@@ -62,7 +79,67 @@ namespace 生成圆圈图片的例子
 			this.pictureBox2.Image = (Image)new Bitmap(w.DrwaCircleQL(dateTimePicker2.Value, mtlist1));
 
 		}
+		public string  yangboNum(string str)//转换为李阳波数字简化
+        {
+			string num = "";
+			//"厥阴风木", "少阴君火", "少阳相火", "太阴湿土", "阳明燥金", "太阳寒水"
+	if(str.Contains("木"))
+            {
+				num = "410";
 
+			}
+			if (str.Contains("金"))
+			{
+				num = "28";
+
+			}
+
+			if (str.Contains("水"))
+			{
+				num = "39";
+
+			}
+
+			if (str.Contains("火"))
+			{
+				
+				if (str.Contains("少阳相火"))
+				{
+					num = "17";
+
+				}
+				else if (str.Contains("少阴君火"))
+				{
+					num = "115";
+
+				}
+				else
+				{
+					num = "?";
+
+				}
+			}
+
+			
+			if (str.Contains("土"))
+			{
+				num = "126";
+
+			}
+			if (str.Contains("太过"))
+			{
+				num = num+"∧";
+
+			}
+			if (str.Contains("不及"))
+			{
+				num = num+ "∨";
+
+			}
+
+
+			return num;
+        }
 
 		/// <summary>
 		/// 画圆圈
