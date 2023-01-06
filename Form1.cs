@@ -102,22 +102,23 @@ namespace 生成圆圈图片的例子
 
 			if (str.Contains("火"))
 			{
-				
-				if (str.Contains("少阳相火"))
-				{
-					num = "17";
 
-				}
-				else if (str.Contains("少阴君火"))
-				{
-					num = "115";
+				//if (str.Contains("少阳相火"))
+				//{
+				//	num = "17";
 
-				}
-				else
-				{
-					num = "?";
+				//}
+				//else if (str.Contains("少阴君火"))
+				//{
+				//	num = "115";
 
-				}
+				//}
+				//else
+				//{
+				//	num = "?";
+
+				//}
+				num = "115";
 			}
 
 			
